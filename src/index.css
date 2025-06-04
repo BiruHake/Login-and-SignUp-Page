@@ -21,9 +21,7 @@ body {
   min-height: 100vh;
  background-color: #FFBF;
   color: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  
 }
 button {
   border-radius: 8px;

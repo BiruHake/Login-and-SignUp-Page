@@ -21,7 +21,6 @@ function SignUp() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(data.message || "Signed up successfully!");
         setUsername('');
         setPassword('');
       } else {
@@ -33,7 +32,7 @@ function SignUp() {
   };
 
   return (
-    <div className='bg-amber-200 max-w-[500px] p-4 flex flex-col justify-center items-center rounded-md shadow-4xl-white '>
+    <div className='bg-amber-200 max-w-[1000px] p-4 flex flex-col justify-center items-center rounded-md shadow-4xl-white '>
       <h2 className='font-bold text-4xl bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 bg-clip-text text-transparent'>Sign Up</h2>
       <form onSubmit={handleSubmit} className='flex flex-col gap-1 mt-4 text-center'>
         <div className='mb-3'>

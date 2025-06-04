@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 import SignUp from './SignUp';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username || !password) {
@@ -14,7 +16,7 @@ function Login() {
     }
 
     try {
-      const res = await fetch('http://localhost:3000/login', {
+      const res = await fetch('http://localhost:3000/Login-and-SignUp-Page/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -22,9 +24,9 @@ function Login() {
       const data = await res.json();
       if (data.success) {
         toast.success(data.message || "Login successfully!");
-        window.location.href = 'https://www.amazon.in/computers-and-accessories/b/?ie=UTF8&node=976392031&ref_=nav_cs_pc';
         setUsername('');
         setPassword('');
+       navigate('/Login-and-SignUp-Page/dashboard');
       } else {
         toast.error(data.message || "Login failed.");
       }
@@ -34,7 +36,7 @@ function Login() {
   };
 
   return (
-    <div className='bg-amber-200 max-w-[500px] p-4 flex flex-col justify-center items-center rounded-md shadow-4xl-white '>
+    <div className='bg-amber-200 max-w-[1000px] p-4 flex flex-col justify-center items-center rounded-md shadow-4xl-white '>
       <h2 className='font-bold text-4xl bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 bg-clip-text text-transparent'>Login</h2>
       <form onSubmit={handleSubmit} className='flex flex-col gap-1 mt-4 text-center'>
         <div className='mb-3'>
@@ -59,7 +61,7 @@ function Login() {
         </div>
          <a className="text-blue-700 text-right" href="#">forgote password</a>
         <button type="submit" className='bg-blue-500 shadow-4xs text-white '>Login</button>
-        <p>Not a member <a className="text-blue-700" href="#" onClick={()=>setISLogin(true)} >SignUp Now</a> </p>
+        <h4>Not a member <a className="text-blue-700" href="#" onClick={()=>setISLogin(true)} >SignUp Now</a> </h4>
       </form>
 
       {/* Toast Container */}

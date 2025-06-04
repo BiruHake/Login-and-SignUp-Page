@@ -1,0 +1,32 @@
+table tr td {
+  padding: 3px;
+}
+.PopUp {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.7s ease;
+}
+.close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  margin: 0;
+  color: rgb(60, 58, 58);
+  font-size: small;
+}
+.item-table {
+  position: relative;
+  padding: 6px;
+  background-color: white;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+.td {
+  border: 1px solid black;
+  padding: 10px;
+}

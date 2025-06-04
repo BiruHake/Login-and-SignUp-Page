@@ -10,7 +10,15 @@ const port = 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set("view engine", "ejs");
-app.set("views", path.join("views"));
+app.set("views", path.join(__dirname,"views"));
+app.use(express.static(path.join(__dirname, 'public')));
+
+const baseUrl='/Login-and-SignUp-Page'
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
 
 // Create the connection to database
 const connection = mysql.createConnection({
@@ -25,7 +33,7 @@ app.get("/", (req, res) => {
 });
 
 // Login validation route
-app.post('/login', (req, res) => {
+app.post(`${baseUrl}/login`, (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -53,10 +61,13 @@ app.post('/login', (req, res) => {
     }
 
     // Successful login
-    res.json({ success: true, message: 'Login successful!' });
-   //res.redirect("https://www.amazon.in/computers-and-accessories/b/?ie=UTF8&node=976392031&ref_=nav_cs_pc");
+   res.json({ success: true, message: 'Login successful!', redirectUrl: `${baseUrl}/showList` });
+   app.get(`${baseUrl}/showList`, (req, res) => {
+  res.render('showList', { username });
+});
   });
 });
+
 
 app.listen(port, () => {
   console.log(`server will start ${port}`);
