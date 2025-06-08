@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require('bcrypt');
 const  uuid4 = require ("uuid4");
 const mysql = require('mysql2');
 const path=require("path");
@@ -32,9 +33,14 @@ app.post("/signUp", (req, res) => {
     return res.json({ success: false, message: "Username and password required" });
   }
 
-  const id = uuid4();
+  bcrypt.hash(password,10, (err,hash)=>{
+    if(err){
+      console.log(err);
+      return;
+    }
+     const id = uuid4();
   const sql = 'INSERT INTO userInfo (id, username, password) VALUES (?, ?, ?)';
-  const values = [id, username, password];
+  const values = [id, username, hash];
 
   connection.query(sql, values, (err, results) => {
     if (err) {
@@ -43,6 +49,7 @@ app.post("/signUp", (req, res) => {
     }
     res.json({ success: true, message: "User registered successfully!" });
   });
+  })
 });
 
 

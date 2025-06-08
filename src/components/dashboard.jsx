@@ -3,7 +3,7 @@ import react, { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./dashboard.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 function Dashboard() {
   const { register, handleSubmit, reset } = useForm();
@@ -11,9 +11,19 @@ function Dashboard() {
   const [items, setItems] = useState([]);
   const [editmode, setEditmode] = useState(false);
   const [editid, setEditid] = useState(null);
+  const navigate=useNavigate();
 
-  useEffect(() => {
-    fetch("http://localhost:3000/Login-and-SignUp-Page/showList")
+  
+  useEffect(()=>{
+    let token = sessionStorage.getItem('token');
+    console.log(token);
+    if(!token){
+    navigate('http://localhost:5173/Login-and-SignUp-Page/');
+    return ;
+    }
+     fetch("http://localhost:3000/Login-and-SignUp-Page/showList",{
+      headers:{'Authorization': `Bearer ${token}`}
+     })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -23,7 +33,7 @@ function Dashboard() {
         }
       })
       .catch((err) => console.error("Error fetching items:", err));
-  }, []);
+  },[]);
 
   //delete
   const deleteItem = async (id) => {

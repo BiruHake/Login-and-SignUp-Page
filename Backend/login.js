@@ -1,4 +1,6 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const uuid4 = require("uuid4");
 const mysql = require('mysql2');
 const path = require("path");
@@ -12,6 +14,8 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname,"views"));
 app.use(express.static(path.join(__dirname, 'public')));
+
+const secreate_key = 'welcome';
 
 const baseUrl='/Login-and-SignUp-Page'
 app.use((req, res, next) => {
@@ -32,6 +36,8 @@ app.get("/", (req, res) => {
   res.send("server will start");
 });
 
+
+
 // Login validation route
 app.post(`${baseUrl}/login`, (req, res) => {
   const { username, password } = req.body;
@@ -45,7 +51,6 @@ app.post(`${baseUrl}/login`, (req, res) => {
 
   connection.query(query, [username], (err, results) => {
     if (err) {
-      console.error(err);
       return res.status(500).json({ success: false, message: 'Server error.' });
     }
 
@@ -55,16 +60,17 @@ app.post(`${baseUrl}/login`, (req, res) => {
 
     const user = results[0];
 
-    // Simple password check (plain text - hashing recommended)
-    if (user.password !== password) {
-      return res.status(401).json({ success: false, message: 'Invalid username or password.' });
-    }
-
-    // Successful login
-   res.json({ success: true, message: 'Login successful!', redirectUrl: `${baseUrl}/showList` });
-   app.get(`${baseUrl}/showList`, (req, res) => {
-  res.render('showList', { username });
-});
+    bcrypt.compare(password,user.password,(err,isMatch)=>{
+      if(err){
+        return res.json({success:false,message:'internal server error'})
+      }
+      if(!isMatch){
+        return res.json({success:false,message:'invalid username and password'})
+      }
+        // Successful login
+    let token = jwt.sign({id:user.id,username:user.username,role:user.role},secreate_key,{expiresIn:'7d'})
+   res.json({ success: true, message: 'Login successful!', redirectUrl: `${baseUrl}/showList`,token});
+    })
   });
 });
 

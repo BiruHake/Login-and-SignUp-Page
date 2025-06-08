@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import SignUp from './SignUp';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -18,11 +17,12 @@ function Login() {
     try {
       const res = await fetch('http://localhost:3000/Login-and-SignUp-Page/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({ username, password }),
       });
       const data = await res.json();
       if (data.success) {
+        sessionStorage.setItem('token',data.token);
         toast.success(data.message || "Login successfully!");
         setUsername('');
         setPassword('');
@@ -40,16 +40,16 @@ function Login() {
       <h2 className='font-bold text-4xl bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 bg-clip-text text-transparent'>Login</h2>
       <form onSubmit={handleSubmit} className='flex flex-col gap-1 mt-4 text-center'>
         <div className='mb-3'>
-          <label>Username:</label><br />
+          <label>Username:</label><br/>
           <input
             type="text"
-            //value={username}
+            value={username}
             placeholder='enter username'
             onChange={e => setUsername(e.target.value)}
             className='px-[26px] py-[4px] text-center border-1 rounded-md'
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '1rem'}}>
           <label>Password:</label><br />
           <input
             type="password"

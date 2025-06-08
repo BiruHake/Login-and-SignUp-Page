@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
 const uuid4 = require("uuid4");
 const mysql = require("mysql2");
 const path = require("path");
@@ -30,6 +31,26 @@ connection.connect((err) => {
   }
 });
 
+//authonticate middleware
+const secreate_key = 'welcome';
+function authonticate(req,res,next){
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if(!token){
+    return res.status(401).json({success:false, message:'Access denied. No token provided.'});
+  }
+ jwt.verify(token,secreate_key,(err,user)=>{
+  if(err){
+  if(err === 'TokenExpiredError'){
+    return res.status(401).json({success:false,message:'token expired please login again'})
+  }
+    return res.status(401).json({success:false,message:'invalid token'})
+  }
+  req.user=user;
+  next();
+ });
+}
+
 const baseUrl = "/Login-and-SignUp-Page";
 
 app.post(`${baseUrl}/showList`, (req, res) => {
@@ -56,7 +77,7 @@ app.post(`${baseUrl}/showList`, (req, res) => {
   });
 });
 
-app.get(`${baseUrl}/showList`, (req, res) => {
+app.get(`${baseUrl}/showList`,authonticate, (req, res) => {
   connection.query("SELECT * FROM itemsList", (err, results) => {
     if (err) {
       return res
